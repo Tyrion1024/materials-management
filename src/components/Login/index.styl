@@ -1,0 +1,109 @@
+.login
+  height 100vh
+  display flex
+  justify-content center
+  background-color #f2f2f2
+  background-image url('./assets/login_bg.png')
+  background-repeat no-repeat
+  background-size 100vw 100vh
+  align-items center
+  .login-container
+    position relative
+  .login__card__bg
+    position absolute
+    bottom -10px
+    right 10px
+    width 382px
+    height 10px
+    filter blur(15px)
+    background-color rgba(11,10,38,0.1)
+.login__logo
+  display flex
+  justify-content center
+  align-items center
+  img
+    width 345px
+
+.login__content
+  z-index 100
+  width 426px
+  height 438px
+  background #ffffff
+  border-top 6px solid #5394fc
+  padding 50px 40px
+  box-sizing border-box
+.login__form
+  margin-top 50px
+
+.login__account, .login__password
+  // display flex
+  // align-items center
+  // width 386px
+  // height 60px
+  // border-radius 6px
+  // box-shadow 0 0 12px 0 rgba(167, 181, 204, 0.38)
+  // background-color white
+
+  // > i
+  //   font-size 26px
+  //   padding 0 24px
+  //   color #c9ccd2
+
+  .el-input
+    width 340px
+    letter-spacing 1px
+    height 48px
+    > input 
+      font-size 18px
+      height 50px
+      line-height 48px
+      background-color transparent
+      outline none
+    .el-input-group__prepend
+      // width 20px
+      padding-left 10px
+      padding-right 10px
+      background #ffffff
+      font-size 18px
+      color #2c3031
+    .el-input-group__append
+      width 80px
+      text-align center
+      background #ffffff
+      color #5394fc
+      font-size 18px
+      .el-button
+        font-weight normal
+      // &::placeholder
+      //   color #c9ccd2
+
+      // &:-webkit-autofill
+      //   transition background-color 5000s ease-in-out 0s
+    
+.login__account
+  margin-bottom 38px
+
+.login__password
+  margin-bottom 5px
+  .ant-input-group-addon
+    padding: 0
+.login__button
+  margin-top 25px
+  width 346px
+  height 48px
+  border-radius 24px
+  background-image linear-gradient(278deg, #75caff, #5394fc 0%)
+  display flex
+  justify-content center
+  align-items center
+  color white
+  cursor pointer
+  font-size 18px
+
+.login__forget-password
+  display flex
+  justify-content space-between
+  margin-bottom 42px
+
+  .el-checkbox
+    color #c9ccd2

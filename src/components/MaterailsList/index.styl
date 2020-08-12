@@ -1,0 +1,88 @@
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+//滚动条的滑块
+::-webkit-scrollbar-thumb {
+  background-color: rgba(161, 163, 169, 0.3);
+  border-radius: 3px;
+}
+.brand-board
+  margin 24px auto
+  width 1366px
+  border-radius 4px
+  box-shadow 0 2px 8px 0 #d9d9d9
+  background-color white
+  display flex
+  flex-direction column
+  .el-row
+    margin 0
+  .el-select
+    height 32px
+    .el-input
+      width 110px
+  .el-select .el-input.is-focus .el-input__inner, .el-input.is-active .el-input__inner, .el-input__inner:focus
+      border-color $main
+
+  .el-input
+    margin-left 16px
+    width 224px
+    border-radius 4px
+    font-size 14px
+
+  .el-input--mini .el-input__inner
+    line-height 32px
+    height 32px
+
+.brand-board__divider
+  margin-top 12px
+  margin-bottom 0px
+  width 100%
+  height 0px
+  border solid 0.5px #e8e8e8
+.brand-board__list
+  .el-card
+    border-color #d9d9d9
+    .el-card__body
+      padding 0 !important
+.withdrawList-container
+  margin-bottom 40px
+.brand-container__title-row
+  display flex
+  justify-content space-between
+.brand-container__header
+  margin 24px
+  height 28px
+  font-size 20px
+  font-weight 500
+  color $black2
+.brand-container_sort-title
+  height 20px
+  font-size 14px
+  font-weight normal
+  color #595959
+.withdrawList-content
+  margin 0px 24px
+  .el-card
+    border-radius 6px
+    box-shadow none
+  .withdrawList-content__row
+    margin 0 -12px !important
+.withdrawList-content_expand
+  height 350px
+  overflow-y auto
+  overflow-x hidden
+  transition height 0.5s
+.withdrawList-content_collapse
+  height 180px
+  overflow hidden
+  transition height 0.5s
+.withdrawList-lite-content_expand
+  height 480px
+  overflow-y auto
+  overflow-x hidden
+  transition height 0.5s
+.withdrawList-lite-content_collapse
+  height 240px
+  overflow hidden
+  transition height 0.5s

@@ -1,0 +1,139 @@
+.layout
+  min-height 100vh
+  display: flex
+.main
+  background-color: #f5f6f7
+  width 100%
+  display: flex
+  flex-direction: column
+  overflow: auto
+  min-height: 100vh
+  flex: 1
+.main__layout
+  overflow: auto
+  position: relative
+  display: flex
+  flex-direction: column
+  flex: 1
+  // ::-ms-overflow-style: none
+  &::-webkit-scrollbar
+    display: none
+
+.main__signout
+  margin-left: 15px
+  transform: translateY(2px)
+  color: white
+  i
+    font-size: 12px
+    vertical-align: middle
+.main__header
+  height: 56px
+  background: white
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.05)
+  display: flex
+  justify-content: space-between
+  align-items: center
+  vertical-align: middle
+  padding-left: 24px
+  i
+    // color: white
+    align-items: center
+    font-size: 14px
+    margin-right 10px
+  img
+    width: 33px
+    cursor: pointer
+  .main__header-left
+    display flex
+    img
+      align-self center
+    .ant-tabs-nav
+      margin 0
+      height 100%
+    .ant-tabs-nav::before
+      display none
+    .el-tabs
+      margin-left 80px
+      .el-tabs__item
+        line-height 56px
+        color #8c8c8c
+      .is-active
+        color $main
+      .el-tabs__nav
+        height 56px
+      .el-tabs__header
+        margin-bottom 0
+      .el-tabs__nav-wrap::after
+        background-color transparent
+.main__header-right
+  display: flex
+  align-items: center
+  height: 100%
+.main__month
+  height: 34px
+  border-radius: 8px
+  background-color: #edf4fe
+  display: flex
+  justify-content: space-between
+  .main__icon
+    width: 34px
+    height: 100%
+    border-radius: 8px
+    background-color: $main
+    display: flex
+    align-items: center
+    justify-content: center
+  .el-date-editor.el-input
+    width: 100px
+    margin-left: 0px
+    font-size: 16px
+    font-weight: 500
+  .el-input--mini .el-input__inner
+    height: 100%
+    line-height: 100%
+    font-weight: 500
+  .el-input__inner
+    border: none
+    padding: 15px !important
+    background-color: rgba(0, 0, 0, 0)
+  .el-input__prefix
+    .el-input__icon
+      width: 0px
+    .el-icon-datebefore
+      content: none
+    .el-input__icon
+      display: none
+.main__divid
+  margin 0 24px
+  width: 0px
+  height: 55px
+  border: solid 0.5px #e8e8e8
+.is-active
+  border-bottom: 0px solid transparent
+.main__account
+  cursor: pointer
+  display: flex
+  height: 100%
+  align-items: center
+  padding-left: 20px
+  padding-right: 24px
+  .el-dropdown-link
+    display: flex
+    cursor: pointer
+    align-items: center
+    .main__avatar
+      width: 22px
+      height: 22px
+      border-radius: 50%
+      border: 1px solid $main
+      img
+        width: 100%
+        height: 100%
+        border-radius: 50%
+  .main__account_username
+    height: 54px !important
+    line-height: 54px !important
+    margin-left: 10px
+    margin-right: 10px
+    font-size: 12px
+    color: #595959
