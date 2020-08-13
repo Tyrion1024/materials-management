@@ -1,16 +1,17 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { Input as AntdInput, Table as AntdTable, Space as AntdSpace, Button as AntdButton } from 'antd'
+import { Input as AntdInput, Table as AntdTable, Space as AntdSpace,Select as AntdSelect, message, Modal } from 'antd'
 import { connect } from 'react-redux'
+import { DownloadOutlined, DeleteOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import Loading from '../../common/Loading'
 import './index.styl'
-import { formatMoney } from '../../util'
 interface IProps {
   userInfo: any
 }
 
 interface IState {
+	showModal: boolean
 	loading: boolean
 	currentKeyword: string
 	currentPage: number
@@ -26,6 +27,7 @@ class MaterailsList extends React.Component<propsType> {
 	constructor (props: propsType) {
 		super(props)
 		this.state = {
+			showModal: false,
 			loading: false,
       currentKeyword: '',
       currentPage: 1,
@@ -80,26 +82,12 @@ class MaterailsList extends React.Component<propsType> {
 		}, () => this.fetchMaterailsList())
 	}
 
-	handleDeliverMoney = (record: any, val: number) => {
-		this.setState({
-			loading: true
-		})
-		axios.get('/admin/updateWithdrawStatus', {
-			params: {
-				withdraw_action_id: record.withdraw_action_id,
-				status: val
-			}
-		}).then(res => {
-			this.fetchMaterailsList()
-		})
-	}
-
-	viewDetails = (record: any) => {
-		this.props.history.push({
-			pathname: '/user-info',
-			state: {
-				from: '提现列表',
-				user_id: record.user_id
+	deleteFile = (id: number) => {
+		Modal.confirm({
+			title: '提示：',
+			content: '确定要删除吗？',
+			onOk: () => {
+				message.error('文件已删除')
 			}
 		})
 	}
@@ -107,14 +95,14 @@ class MaterailsList extends React.Component<propsType> {
 	render () {
 		const columns = [
 			{
-				title: '用户ID',
-				dataIndex: 'user_id',
-				key: 'user_id'
+				title: '一级分类',
+				dataIndex: 'level_one_name',
+				key: 'level_one_name'
 			},
 			{
-				title: '用户昵称',
-				dataIndex: 'user_name',
-				key: 'user_name'
+				title: '二级分类',
+				dataIndex: 'level_two_name',
+				key: 'level_two_name'
 			},
 			{
 				title: '发起时间',
@@ -123,54 +111,35 @@ class MaterailsList extends React.Component<propsType> {
 				render: (val: string) => val.replace(/-/g, '/')
 			},
 			{
-				title: '真实姓名',
-				dataIndex: 'real_user_name',
-				key: 'real_user_name'
+				title: '文件名',
+				dataIndex: 'file_name',
+				key: 'file_name'
 			},
 			{
-				title: '绑定手机号',
-				dataIndex: 'phone',
-				key: 'phone'
+				title: '操作人',
+				dataIndex: 'opearitor',
+				key: 'opearitor'
 			},
 			{
-				title: '银行卡号',
-				dataIndex: 'card_number',
-				key: 'card_number'
-			},
-			{
-				title: '身份证号',
-				dataIndex: 'id_number',
-				key: 'id_number'
-			},
-			{
-				title: '提现金额',
-				dataIndex: 'amount',
-				key: 'amount',
-				render: (val: number): string => formatMoney(val)
+				title: '上传时间',
+				dataIndex: 'create_date',
+				key: 'create_date'
 			},
 			{
 				title: '操作',
 				key: 'status',
 				dataIndex: 'status',
 				render: (status: number, record: any) => {
-					if (status) {
-						switch (status) {
-							case 0:
-								return <span>待发放</span>
-							case 1:
-								return <span>发放成功</span>
-							case 2:
-								return <span>发放失败</span>
-						}
-					} else {
-						return (
-							<AntdSpace size="middle">
-								<AntdButton type="primary" onClick={ () => this.handleDeliverMoney(record, 1) }> 发放成功 </AntdButton>
-								<AntdButton type="dashed" onClick={ () => this.handleDeliverMoney(record, 2) }> 发放失败 </AntdButton>
-								<AntdButton type="link" onClick={ () => this.viewDetails(record) }> 查看详情 </AntdButton>
-							</AntdSpace>
-						)
-					}
+					return (
+						<AntdSpace size="middle">
+							<a href={record.file_download_path} rel="noopener noreferrer" target="_blank">
+								<DownloadOutlined />
+							</a>
+							<span onClick={ () => this.deleteFile(record.file_id) }>
+								<DeleteOutlined />
+							</span>
+						</AntdSpace>
+					)
 				}
 			}
 		]
@@ -183,11 +152,14 @@ class MaterailsList extends React.Component<propsType> {
 					<div className="brand-container__header">
 						<div className="brand-container__title-row">
 							<div className="brand-container_title-left">
-								<span>提现列表</span>
+								<span>材料列表</span>
 							</div>
 							<div className="brand-container_title-right">
+								<AntdSelect>
+									
+								</AntdSelect>
 								<AntdInput.Search
-									placeholder="搜索用户ID、昵称、绑定手机号、真实姓名"
+									placeholder="请输入关键词"
 									value={ this.state.currentKeyword }
 									size="large"
 									onChange={ this.handleKeywordChange }
@@ -207,7 +179,7 @@ class MaterailsList extends React.Component<propsType> {
 									onChange: this.handlePageNumberChange
 								}}
 								rowKey={
-									(record: any) => record.user_id
+									(record: any) => record.file_id
 								}
 							></AntdTable>
 						</div>
