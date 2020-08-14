@@ -17,6 +17,12 @@ interface IState {
 	currentPage: number
 	totalRow: number
 	MaterailsList: Array<{}>
+	treeList: Array<{
+		id: number
+		[key: string]: any
+	}>
+	oneLevelIndex: number
+	twoLevelIndex: number
 }
 type propsType = RouteComponentProps & IProps
 
@@ -32,7 +38,67 @@ class MaterailsList extends React.Component<propsType> {
       currentKeyword: '',
       currentPage: 1,
       totalRow: 0,
-      MaterailsList: []
+			MaterailsList: [],
+			oneLevelIndex: 0,
+			twoLevelIndex: 0,
+			treeList:[
+				{
+					id: 0,
+					level_name: '全部一级领域'
+				},
+				{
+					id: 1,
+					level_name: '蛋白质',
+					children: [
+						{
+							id: 0,
+							level_name: '全部蛋白质'
+						},
+						{
+							id: 11,
+							level_name: '蛋白质生物生物1'
+						},
+						{
+							id: 12,
+							level_name: '蛋白质生物生物2'
+						},
+						{
+							id: 13,
+							level_name: '蛋白质生物生物3'
+						},
+						{
+							id: 14,
+							level_name: '蛋白质生物生物4'
+						}
+					]
+				},
+				{
+					id: 2,
+					level_name: '蛋黑质',
+					children: [
+						{
+							id: 0,
+							level_name: '全部蛋黑质'
+						},
+						{
+							id: 21,
+							level_name: '蛋黑质生物生物1'
+						},
+						{
+							id: 22,
+							level_name: '蛋黑质生物生物2'
+						},
+						{
+							id: 23,
+							level_name: '蛋黑质生物生物3'
+						},
+						{
+							id: 24,
+							level_name: '蛋黑质生物生物4'
+						}
+					]
+				}
+			]
 		}
 	}
 
@@ -92,6 +158,22 @@ class MaterailsList extends React.Component<propsType> {
 		})
 	}
 
+	handleSelectOne = (e: any) => {
+		this.setState({
+			oneLevelIndex: e,
+			twoLevelIndex: 0,
+			currentPage: 0
+		}, () => this.fetchMaterailsList)
+	}
+
+	handleSelectTwo = (e: any) => {
+		this.setState({
+			twoLevelIndex: e,
+			currentPage: 0
+		}, () => this.fetchMaterailsList)
+	}
+
+
 	render () {
 		const columns = [
 			{
@@ -103,12 +185,6 @@ class MaterailsList extends React.Component<propsType> {
 				title: '二级分类',
 				dataIndex: 'level_two_name',
 				key: 'level_two_name'
-			},
-			{
-				title: '发起时间',
-				dataIndex: 'create_date',
-				key: 'create_date',
-				render: (val: string) => val.replace(/-/g, '/')
 			},
 			{
 				title: '文件名',
@@ -155,8 +231,19 @@ class MaterailsList extends React.Component<propsType> {
 								<span>材料列表</span>
 							</div>
 							<div className="brand-container_title-right">
-								<AntdSelect>
-									
+								<AntdSelect value={ this.state.oneLevelIndex } size="large" onChange={ this.handleSelectOne } placeholder="请选择一级领域">
+									{
+										this.state.treeList.map((v: any, index: number) => {
+											return <AntdSelect.Option value={ index } key={ v.id }> { v.level_name } </AntdSelect.Option>
+										})
+									}
+								</AntdSelect>
+								<AntdSelect value={ this.state.oneLevelIndex ? this.state.twoLevelIndex : '请先输入一级领域' } style={{margin: '0 15px'}} size="large" placeholder="请选择二级领域" onChange={ this.handleSelectTwo } disabled={ !this.state.oneLevelIndex }>
+									{
+										this.state.oneLevelIndex && this.state.treeList[this.state.oneLevelIndex].children.map((v: any, index: number) => {
+											return <AntdSelect.Option value={ index } key={ v.id }> { v.level_name } </AntdSelect.Option>
+										})
+									}
 								</AntdSelect>
 								<AntdInput.Search
 									placeholder="请输入关键词"
