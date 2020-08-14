@@ -16,13 +16,14 @@ interface IState {
 	currentKeyword: string
 	currentPage: number
 	totalRow: number
-	MaterailsList: Array<{}>
+	materailsList: Array<{}>
 	treeList: Array<{
-		id: number
+		id: number | undefined
 		[key: string]: any
 	}>
-	oneLevelIndex: number
-	twoLevelIndex: number
+	treeListchildren: Array<{}>
+	oneLevelId: number | undefined
+	twoLevelId: number | undefined
 }
 type propsType = RouteComponentProps & IProps
 
@@ -38,22 +39,18 @@ class MaterailsList extends React.Component<propsType> {
       currentKeyword: '',
       currentPage: 1,
       totalRow: 0,
-			MaterailsList: [],
-			oneLevelIndex: 0,
-			twoLevelIndex: 0,
+			materailsList: [],
+			oneLevelId: undefined,
+			twoLevelId: undefined,
 			treeList:[
 				{
-					id: 0,
-					level_name: '全部一级领域'
+					id: undefined,
+					level_name: '全部一级领域',
 				},
 				{
 					id: 1,
 					level_name: '蛋白质',
 					children: [
-						{
-							id: 0,
-							level_name: '全部蛋白质'
-						},
 						{
 							id: 11,
 							level_name: '蛋白质生物生物1'
@@ -77,10 +74,6 @@ class MaterailsList extends React.Component<propsType> {
 					level_name: '蛋黑质',
 					children: [
 						{
-							id: 0,
-							level_name: '全部蛋黑质'
-						},
-						{
 							id: 21,
 							level_name: '蛋黑质生物生物1'
 						},
@@ -98,12 +91,13 @@ class MaterailsList extends React.Component<propsType> {
 						}
 					]
 				}
-			]
+			],
+			treeListchildren: []
 		}
 	}
 
 	componentDidMount () {
-		this.fetchMaterailsList()
+		// this.fetchMaterailsList()
 	}
 
 	handleKeywordChange = (e: any) => {
@@ -130,7 +124,7 @@ class MaterailsList extends React.Component<propsType> {
 		}).then((res: any) => {
 			this.setState({
 				loading: false,
-				MaterailsList: res.table_data,
+				materailsList: res.table_data,
 				totalRow: res.total_row
 			})
 		})
@@ -159,22 +153,26 @@ class MaterailsList extends React.Component<propsType> {
 	}
 
 	handleSelectOne = (e: any) => {
+		console.log('handleSelectOne', e)
 		this.setState({
-			oneLevelIndex: e,
-			twoLevelIndex: 0,
-			currentPage: 0
+			oneLevelId: e ? e : undefined,
+			twoLevelId: undefined,
+			currentPage: 0,
+			treeListchildren: e ? this.state.treeList[e].children : []
 		}, () => this.fetchMaterailsList)
 	}
 
 	handleSelectTwo = (e: any) => {
+		console.log('handleSelectTwo', e)
 		this.setState({
-			twoLevelIndex: e,
+			twoLevelId: e ? e : undefined,
 			currentPage: 0
 		}, () => this.fetchMaterailsList)
 	}
 
 
 	render () {
+		// console.log(this.state.materailsList)
 		const columns = [
 			{
 				title: '一级分类',
@@ -231,17 +229,18 @@ class MaterailsList extends React.Component<propsType> {
 								<span>材料列表</span>
 							</div>
 							<div className="brand-container_title-right">
-								<AntdSelect value={ this.state.oneLevelIndex } size="large" onChange={ this.handleSelectOne } placeholder="请选择一级领域">
+								<AntdSelect value={ this.state.oneLevelId } size="large" onChange={ this.handleSelectOne } placeholder="请选择一级领域">
 									{
-										this.state.treeList.map((v: any, index: number) => {
-											return <AntdSelect.Option value={ index } key={ v.id }> { v.level_name } </AntdSelect.Option>
+										this.state.treeList.map((v: any) => {
+											return <AntdSelect.Option value={ v.id  } key={ v.id }> { v.level_name } </AntdSelect.Option>
 										})
 									}
 								</AntdSelect>
-								<AntdSelect value={ this.state.oneLevelIndex ? this.state.twoLevelIndex : '请先输入一级领域' } style={{margin: '0 15px'}} size="large" placeholder="请选择二级领域" onChange={ this.handleSelectTwo } disabled={ !this.state.oneLevelIndex }>
+								<AntdSelect value={ this.state.oneLevelId ? this.state.twoLevelId : '请先输入一级领域' } style={{margin: '0 15px'}} size="large" placeholder="请选择二级领域" onChange={ this.handleSelectTwo } disabled={ !this.state.treeListchildren.length }>
+									<AntdSelect.Option value={ 0 }> 全部二级领域 </AntdSelect.Option>
 									{
-										this.state.oneLevelIndex && this.state.treeList[this.state.oneLevelIndex].children.map((v: any, index: number) => {
-											return <AntdSelect.Option value={ index } key={ v.id }> { v.level_name } </AntdSelect.Option>
+										this.state.treeListchildren.map((v: any) => {
+											return <AntdSelect.Option value={ v.id  } key={ v.id }> { v.level_name } </AntdSelect.Option>
 										})
 									}
 								</AntdSelect>
@@ -259,15 +258,13 @@ class MaterailsList extends React.Component<propsType> {
 					<div className="MaterailsList-content">
 						<div id="MaterailsList-content__row">
 							<AntdTable
-								dataSource={ this.state.MaterailsList }
+								dataSource={ this.state.materailsList }
 								columns={ columns }
 								pagination={{
 									total: this.state.totalRow,
 									onChange: this.handlePageNumberChange
 								}}
-								rowKey={
-									(record: any) => record.file_id
-								}
+								rowKey={(record: any) => record.user_id}
 							></AntdTable>
 						</div>
 					</div>
