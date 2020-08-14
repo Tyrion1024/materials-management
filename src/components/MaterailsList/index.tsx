@@ -211,7 +211,7 @@ class MaterailsList extends React.Component<propsType> {
 							<a href={record.file_download_path} rel="noopener noreferrer" target="_blank">
 								<DownloadOutlined />
 							</a>
-							<span onClick={ () => this.deleteFile(record.file_id) }>
+							<span style={{ cursor: 'pointer' }} onClick={ () => this.deleteFile(record.file_id) }>
 								<DeleteOutlined />
 							</span>
 						</AntdSpace>
