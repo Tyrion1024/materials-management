@@ -28,8 +28,8 @@ axios.interceptors.response.use(
     if (resData.code === 1) {
       return resData.data
     } else {
+      message.error(resData.msg)
       if (resData.code === 10100 || resData.code === 10400 || resData.code === 10010) {
-        message.error(resData.msg)
         return res.data
       } else {
         return Promise.reject(new Error(resData.msg))
@@ -48,5 +48,6 @@ axios.interceptors.response.use(
       return
     }
     message.error(codeMsg[code] || codeMsg.default)
+    throw new Error(err)
   }
 )
