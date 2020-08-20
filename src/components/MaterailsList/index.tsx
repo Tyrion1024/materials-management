@@ -1,11 +1,13 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { Input as AntdInput, Table as AntdTable, Space as AntdSpace,Select as AntdSelect, message, Modal } from 'antd'
+import { Input as AntdInput, Table as AntdTable, Space as AntdSpace, message, Modal, Button as AntdButton } from 'antd'
 import { connect } from 'react-redux'
 import { DownloadOutlined, DeleteOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import Loading from '../../common/Loading'
+import SelectTree from '../../common/SelectTree'
 import './index.styl'
+import UploadFilesDialog from '../../common/UploadFilesDialog'
 interface IProps {
   userInfo: any
 }
@@ -17,13 +19,9 @@ interface IState {
 	currentPage: number
 	totalRow: number
 	materailsList: Array<{}>
-	treeList: Array<{
-		id: number | undefined
-		[key: string]: any
-	}>
-	treeListchildren: Array<{}>
 	oneLevelId: number | undefined
 	twoLevelId: number | undefined
+	showUploadDialog: boolean
 }
 type propsType = RouteComponentProps & IProps
 
@@ -42,62 +40,12 @@ class MaterailsList extends React.Component<propsType> {
 			materailsList: [],
 			oneLevelId: undefined,
 			twoLevelId: undefined,
-			treeList:[
-				{
-					id: undefined,
-					level_name: '全部一级领域',
-				},
-				{
-					id: 1,
-					level_name: '蛋白质',
-					children: [
-						{
-							id: 11,
-							level_name: '蛋白质生物生物1'
-						},
-						{
-							id: 12,
-							level_name: '蛋白质生物生物2'
-						},
-						{
-							id: 13,
-							level_name: '蛋白质生物生物3'
-						},
-						{
-							id: 14,
-							level_name: '蛋白质生物生物4'
-						}
-					]
-				},
-				{
-					id: 2,
-					level_name: '蛋黑质',
-					children: [
-						{
-							id: 21,
-							level_name: '蛋黑质生物生物1'
-						},
-						{
-							id: 22,
-							level_name: '蛋黑质生物生物2'
-						},
-						{
-							id: 23,
-							level_name: '蛋黑质生物生物3'
-						},
-						{
-							id: 24,
-							level_name: '蛋黑质生物生物4'
-						}
-					]
-				}
-			],
-			treeListchildren: []
+			showUploadDialog: false
 		}
 	}
 
 	componentDidMount () {
-		// this.fetchMaterailsList()
+		this.fetchMaterailsList()
 	}
 
 	handleKeywordChange = (e: any) => {
@@ -132,7 +80,6 @@ class MaterailsList extends React.Component<propsType> {
 			this.setState({
 				loading: false
 			})
-			throw new Error(err)
 		})
 	}
 
@@ -153,26 +100,22 @@ class MaterailsList extends React.Component<propsType> {
 	}
 
 	handleSelectOne = (e: any) => {
-		console.log('handleSelectOne', e)
 		this.setState({
 			oneLevelId: e ? e : undefined,
 			twoLevelId: undefined,
-			currentPage: 0,
-			treeListchildren: e ? this.state.treeList[e].children : []
-		}, () => this.fetchMaterailsList)
+			currentPage: 0
+		}, () => this.fetchMaterailsList())
 	}
 
 	handleSelectTwo = (e: any) => {
-		console.log('handleSelectTwo', e)
 		this.setState({
 			twoLevelId: e ? e : undefined,
 			currentPage: 0
-		}, () => this.fetchMaterailsList)
+		}, () => this.fetchMaterailsList())
 	}
 
 
 	render () {
-		// console.log(this.state.materailsList)
 		const columns = [
 			{
 				title: '一级分类',
@@ -222,28 +165,18 @@ class MaterailsList extends React.Component<propsType> {
 				{
 					this.state.loading && <Loading />
 				}
+				{
+					this.state.showUploadDialog && <UploadFilesDialog handleOk={ () => this.setState({ showUploadDialog: false }) } handleCancel={ () => this.setState({ showUploadDialog: false }) } />
+				}
 				<div className="bracn-board__list">
 					<div className="brand-container__header">
 						<div className="brand-container__title-row">
 							<div className="brand-container_title-left">
 								<span>材料列表</span>
+								<AntdButton style={{ marginLeft: 15 }} onClick={ () => this.setState({ showUploadDialog: true }) }>上传</AntdButton>
 							</div>
 							<div className="brand-container_title-right">
-								<AntdSelect value={ this.state.oneLevelId } size="large" onChange={ this.handleSelectOne } placeholder="请选择一级领域">
-									{
-										this.state.treeList.map((v: any) => {
-											return <AntdSelect.Option value={ v.id  } key={ v.id }> { v.level_name } </AntdSelect.Option>
-										})
-									}
-								</AntdSelect>
-								<AntdSelect value={ this.state.oneLevelId ? this.state.twoLevelId : '请先输入一级领域' } style={{margin: '0 15px'}} size="large" placeholder="请选择二级领域" onChange={ this.handleSelectTwo } disabled={ !this.state.treeListchildren.length }>
-									<AntdSelect.Option value={ 0 }> 全部二级领域 </AntdSelect.Option>
-									{
-										this.state.treeListchildren.map((v: any) => {
-											return <AntdSelect.Option value={ v.id  } key={ v.id }> { v.level_name } </AntdSelect.Option>
-										})
-									}
-								</AntdSelect>
+								<SelectTree isUpload={ false } oneLevelId={ this.state.oneLevelId } twoLevelId={ this.state.twoLevelId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
 								<AntdInput.Search
 									placeholder="请输入关键词"
 									value={ this.state.currentKeyword }
