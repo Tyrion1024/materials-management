@@ -8,19 +8,29 @@ import Loading from '../../common/Loading'
 import SelectTree from '../../common/SelectTree'
 import './index.styl'
 import UploadFilesDialog from '../../common/UploadFilesDialog'
+import {
+	setSearchPageNumber,
+	setSearchKeyword,
+	setSearchLevelOne,
+	setSearchLevelTwo,
+} from '../../store/actions/searchHistory'
 interface IProps {
-  userInfo: any
+	userInfo: any,
+	oneLevelId: number | undefined
+	twoLevelId: number | undefined
+	currentKeyword: string
+	currentPage: number
+	setSearchKeyword: Function
+	setSearchPageNumber: Function
+	setSearchLevelOne: Function
+	setSearchLevelTwo: Function
 }
 
 interface IState {
 	showModal: boolean
 	loading: boolean
-	currentKeyword: string
-	currentPage: number
 	totalRow: number
 	materailsList: Array<{}>
-	oneLevelId: number | undefined
-	twoLevelId: number | undefined
 	showUploadDialog: boolean
 }
 type propsType = RouteComponentProps & IProps
@@ -34,12 +44,8 @@ class MaterailsList extends React.Component<propsType> {
 		this.state = {
 			showModal: false,
 			loading: false,
-      currentKeyword: '',
-      currentPage: 1,
       totalRow: 0,
 			materailsList: [],
-			oneLevelId: undefined,
-			twoLevelId: undefined,
 			showUploadDialog: false
 		}
 	}
@@ -49,23 +55,21 @@ class MaterailsList extends React.Component<propsType> {
 	}
 
 	handleKeywordChange = (e: any) => {
-		this.setState({
-			currentKeyword: e.target.value
-		})
+		this.props.setSearchKeyword(e.target.value)
 	}
 
 	searchMaterailsList = () => {
+		this.props.setSearchPageNumber(1)
 		this.setState({
 			loading: true,
-			currentPage: 1
 		}, () => this.fetchMaterailsList())
 	}
 
 	fetchMaterailsList = () => {
 		let params = {
-			page_number: this.state.currentPage,
+			page_number: this.props.currentPage,
 			page_size: 10,
-			keyword: this.state.currentKeyword
+			keyword: this.props.currentKeyword
 		}
 		axios.get('/admin/getWithdrawTable', {
 			params
@@ -84,9 +88,8 @@ class MaterailsList extends React.Component<propsType> {
 	}
 
 	handlePageNumberChange = (val: number) => {
-		this.setState({
-			currentPage: val
-		}, () => this.fetchMaterailsList())
+		this.props.setSearchPageNumber(val)
+		this.fetchMaterailsList()
 	}
 
 	deleteFile = (id: number) => {
@@ -100,18 +103,16 @@ class MaterailsList extends React.Component<propsType> {
 	}
 
 	handleSelectOne = (e: any) => {
-		this.setState({
-			oneLevelId: e ? e : undefined,
-			twoLevelId: undefined,
-			currentPage: 0
-		}, () => this.fetchMaterailsList())
+		this.props.setSearchLevelOne(e ? e : undefined)
+		this.props.setSearchLevelTwo(undefined)
+		this.props.setSearchPageNumber(1)
+		this.fetchMaterailsList()
 	}
 
 	handleSelectTwo = (e: any) => {
-		this.setState({
-			twoLevelId: e ? e : undefined,
-			currentPage: 0
-		}, () => this.fetchMaterailsList())
+		this.props.setSearchLevelTwo(e ? e : undefined)
+		this.props.setSearchPageNumber(1)
+		this.fetchMaterailsList()
 	}
 
 
@@ -176,10 +177,10 @@ class MaterailsList extends React.Component<propsType> {
 								<AntdButton style={{ marginLeft: 15 }} onClick={ () => this.setState({ showUploadDialog: true }) }>上传</AntdButton>
 							</div>
 							<div className="brand-container_title-right">
-								<SelectTree isUpload={ false } oneLevelId={ this.state.oneLevelId } twoLevelId={ this.state.twoLevelId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
+								<SelectTree isUpload={ false } oneLevelId={ this.props.oneLevelId } twoLevelId={ this.props.twoLevelId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
 								<AntdInput.Search
 									placeholder="请输入关键词"
-									value={ this.state.currentKeyword }
+									value={ this.props.currentKeyword }
 									size="large"
 									onChange={ this.handleKeywordChange }
 									onSearch={ this.searchMaterailsList }
@@ -210,7 +211,21 @@ class MaterailsList extends React.Component<propsType> {
 
 const mapStateToProps = (state: any , ownProps: any) => {
 	return {
-		userInfo: state.user.userInfo
+		userInfo: state.user.userInfo,
+		oneLevelId: state.searchHistory.level_one_id,
+		twoLevelId: state.searchHistory.level_two_id,
+		currentPage: state.searchHistory.page_number,
+		currentKeyword: state.searchHistory.keyword
 	}
 }
-export default withRouter(connect(mapStateToProps)(MaterailsList))
+
+const mapDispatchToProps = (dispatch: Function) => {
+	return {
+		setSearchPageNumber: (pageNumber: number) => setSearchPageNumber(dispatch, pageNumber),
+		setSearchKeyword: (keyword: string) => setSearchKeyword(dispatch, keyword),
+		setSearchLevelOne: (level: number | undefined) => setSearchLevelOne(dispatch, level),
+		setSearchLevelTwo: (level: number | undefined) => setSearchLevelTwo(dispatch, level)
+	}
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MaterailsList))
