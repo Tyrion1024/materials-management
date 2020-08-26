@@ -2,14 +2,13 @@ import { compact } from 'lodash'
 
 export const getBaseUrl = () => {
   interface URL {
-    mock: string,
     development: string,
     default: string,
     [key: string]: any
   }
   const url: URL = {
-    mock: 'http://mock.ui.sandbox.fugetech.com/mock/5bab2b64fda472679e1d397f',
-    development: 'http://byepest-mini-admin.ui.sandbox.fugetech.com/api',
+    development: 'http://mock.fugetech.com/mock/5bab2b64fda472679e1d397f',
+    // development: 'http://byepest-mini-admin.ui.sandbox.fugetech.com/api',
     default: '/api'
   }
   return url[process.env.NODE_ENV] || url.default
@@ -39,6 +38,22 @@ export const formatMoney = (v: any, b = 0) => {
   const num = Math.abs(Number(v)).toFixed(b).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   if (v < 0) return '-' + num + '元'
   return num + '元'
+}
+
+export const formatDateTime =  (inputTime: Date) => {
+  var date = new Date(inputTime)
+  var y = date.getFullYear()
+  var m: string | number = date.getMonth() + 1
+  m = m < 10 ? ('0' + m) : m
+  var d: string | number = date.getDate()
+  d = d < 10 ? ('0' + d) : d
+  var h: string | number = date.getHours()
+  h = h < 10 ? ('0' + h) : h
+  var minute: string | number = date.getMinutes()
+  var second: string | number = date.getSeconds()
+  minute = minute < 10 ? ('0' + minute) : minute
+  second = second < 10 ? ('0' + second) : second
+  return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second
 }
 
 export const format4backend = (obj: any) => {

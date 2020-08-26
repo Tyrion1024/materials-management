@@ -71,7 +71,7 @@ class MaterailsList extends React.Component<propsType> {
 			page_size: 10,
 			keyword: this.props.currentKeyword
 		}
-		axios.get('/admin/getWithdrawTable', {
+		axios.get('/admin/getMaterailTable', {
 			params
 		}).then((res: any) => {
 			this.setState({
@@ -92,12 +92,22 @@ class MaterailsList extends React.Component<propsType> {
 		this.fetchMaterailsList()
 	}
 
-	deleteFile = (id: number) => {
+	deleteFile = (uid: number) => {
 		Modal.confirm({
 			title: '提示：',
 			content: '确定要删除吗？',
 			onOk: () => {
-				message.error('文件已删除')
+				this.setState({
+					loading: true
+				})
+				axios.post('/admin/deleteMaterail', {
+					uid: uid
+				}).then(res => {
+					this.setState({
+						loading: false
+					}, () => this.fetchMaterailsList())
+					message.success('文件已删除')
+				})
 			}
 		})
 	}
@@ -113,6 +123,17 @@ class MaterailsList extends React.Component<propsType> {
 		this.props.setSearchLevelTwo(e ? e : undefined)
 		this.props.setSearchPageNumber(1)
 		this.fetchMaterailsList()
+	}
+
+	saveMaterails = (state: any) => {
+		axios.post('/admin/saveMaterails', {
+			one_level_id: state.oneLevelId,
+			two_level_id: state.twoLevelId,
+			file_list: state.fileList
+		}).then((res: any) => {
+			message.success('添加成功')
+			this.setState({ showUploadDialog: false }, () => this.fetchMaterailsList())
+		})
 	}
 
 
@@ -150,10 +171,10 @@ class MaterailsList extends React.Component<propsType> {
 				render: (status: number, record: any) => {
 					return (
 						<AntdSpace size="middle">
-							<a href={record.file_download_path} rel="noopener noreferrer" target="_blank">
+							<a href={record.download_url} rel="noopener noreferrer" target="_blank">
 								<DownloadOutlined />
 							</a>
-							<span style={{ cursor: 'pointer' }} onClick={ () => this.deleteFile(record.file_id) }>
+							<span style={{ cursor: 'pointer' }} onClick={ () => this.deleteFile(record.uid) }>
 								<DeleteOutlined />
 							</span>
 						</AntdSpace>
@@ -167,7 +188,7 @@ class MaterailsList extends React.Component<propsType> {
 					this.state.loading && <Loading />
 				}
 				{
-					this.state.showUploadDialog && <UploadFilesDialog handleOk={ () => this.setState({ showUploadDialog: false }) } handleCancel={ () => this.setState({ showUploadDialog: false }) } />
+					this.state.showUploadDialog && <UploadFilesDialog handleOk={ this.saveMaterails } handleCancel={ () => this.setState({ showUploadDialog: false }) } />
 				}
 				<div className="bracn-board__list">
 					<div className="brand-container__header">
@@ -198,7 +219,7 @@ class MaterailsList extends React.Component<propsType> {
 									total: this.state.totalRow,
 									onChange: this.handlePageNumberChange
 								}}
-								rowKey={(record: any) => record.user_id}
+								rowKey={(record: any) => record.uid}
 							></AntdTable>
 						</div>
 					</div>

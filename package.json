@@ -12,6 +12,7 @@
     "@types/axios": "^0.14.0",
     "@types/jest": "^24.0.0",
     "@types/lodash": "^4.14.158",
+    "@types/mockjs": "^1.0.3",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
@@ -50,6 +51,7 @@
     "jest-watch-typeahead": "0.4.2",
     "lodash": "^4.17.19",
     "mini-css-extract-plugin": "0.9.0",
+    "mockjs": "^1.1.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "pnp-webpack-plugin": "1.6.4",
     "postcss-flexbugs-fixes": "4.1.0",
@@ -95,6 +97,11 @@
       "not op_mini all"
     ],
     "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ],
+    "mock": [
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"

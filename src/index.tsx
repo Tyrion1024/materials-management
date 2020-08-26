@@ -6,7 +6,7 @@ import { store, persistor} from './store'
 import * as serviceWorker from './serviceWorker';
 import App from './App';
 import './axios'
-
+import './mock'
 
 
 ReactDOM.render(

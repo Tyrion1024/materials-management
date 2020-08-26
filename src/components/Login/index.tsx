@@ -79,7 +79,7 @@ class Login extends React.Component<propsType> {
 		})
     axios
       .post(
-        '/signinForPhone',
+        '/signin',
         format4backend({
           username: this.state.account,
           password: this.state.password,
