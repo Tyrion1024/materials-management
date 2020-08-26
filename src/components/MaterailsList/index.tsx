@@ -219,7 +219,7 @@ class MaterailsList extends React.Component<propsType> {
 								dataSource={ this.state.materailsList }
 								columns={ columns }
 								pagination={{
-									defaultCurrent: this.props.currentPage,
+									current: this.props.currentPage,
 									total: this.state.totalRow,
 									onChange: this.handlePageNumberChange
 								}}
