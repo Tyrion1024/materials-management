@@ -16,8 +16,8 @@ import {
 } from '../../store/actions/searchHistory'
 interface IProps {
 	userInfo: any,
-	oneLevelId: number | undefined
-	twoLevelId: number | undefined
+	levelOneId: number | undefined
+	levelTwoId: number | undefined
 	currentKeyword: string
 	currentPage: number
 	setSearchKeyword: Function
@@ -58,8 +58,8 @@ class MaterailsList extends React.Component<propsType> {
 		this.props.setSearchKeyword(e.target.value)
 	}
 
-	searchMaterailsList = () => {
-		this.props.setSearchPageNumber(1)
+	searchMaterailsList = async () => {
+		await this.props.setSearchPageNumber(1)
 		this.setState({
 			loading: true,
 		}, () => this.fetchMaterailsList())
@@ -69,8 +69,11 @@ class MaterailsList extends React.Component<propsType> {
 		let params = {
 			page_number: this.props.currentPage,
 			page_size: 10,
-			keyword: this.props.currentKeyword
+			keyword: this.props.currentKeyword,
+			level_one_id: this.props.levelOneId,
+			level_two_id: this.props.levelTwoId
 		}
+		console.log('params', params)
 		axios.get('/admin/getMaterailTable', {
 			params
 		}).then((res: any) => {
@@ -87,8 +90,8 @@ class MaterailsList extends React.Component<propsType> {
 		})
 	}
 
-	handlePageNumberChange = (val: number) => {
-		this.props.setSearchPageNumber(val)
+	handlePageNumberChange = async (val: number) => {
+		await this.props.setSearchPageNumber(val)
 		this.fetchMaterailsList()
 	}
 
@@ -102,7 +105,7 @@ class MaterailsList extends React.Component<propsType> {
 				})
 				axios.post('/admin/deleteMaterail', {
 					uid: uid
-				}).then(res => {
+				}).then(() => {
 					this.setState({
 						loading: false
 					}, () => this.fetchMaterailsList())
@@ -112,23 +115,23 @@ class MaterailsList extends React.Component<propsType> {
 		})
 	}
 
-	handleSelectOne = (e: any) => {
-		this.props.setSearchLevelOne(e ? e : undefined)
-		this.props.setSearchLevelTwo(undefined)
-		this.props.setSearchPageNumber(1)
+	handleSelectOne = async (e: any) => {
+		await this.props.setSearchLevelOne(e ? e : undefined)
+		await this.props.setSearchLevelTwo(undefined)
+		await this.props.setSearchPageNumber(1)
 		this.fetchMaterailsList()
 	}
 
-	handleSelectTwo = (e: any) => {
-		this.props.setSearchLevelTwo(e ? e : undefined)
-		this.props.setSearchPageNumber(1)
+	handleSelectTwo = async (e: any) => {
+		await this.props.setSearchLevelTwo(e ? e : undefined)
+		await this.props.setSearchPageNumber(1)
 		this.fetchMaterailsList()
 	}
 
 	saveMaterails = (state: any) => {
 		axios.post('/admin/saveMaterails', {
-			one_level_id: state.oneLevelId,
-			two_level_id: state.twoLevelId,
+			level_one_id: state.levelOneId,
+			level_two_id: state.levelTwoId,
 			file_list: state.fileList
 		}).then((res: any) => {
 			message.success('添加成功')
@@ -198,7 +201,7 @@ class MaterailsList extends React.Component<propsType> {
 								<AntdButton style={{ marginLeft: 15 }} onClick={ () => this.setState({ showUploadDialog: true }) }>上传</AntdButton>
 							</div>
 							<div className="brand-container_title-right">
-								<SelectTree isUpload={ false } oneLevelId={ this.props.oneLevelId } twoLevelId={ this.props.twoLevelId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
+								<SelectTree isUpload={ false } levelOneId={ this.props.levelOneId } levelTwoId={ this.props.levelTwoId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
 								<AntdInput.Search
 									placeholder="请输入关键词"
 									value={ this.props.currentKeyword }
@@ -216,6 +219,7 @@ class MaterailsList extends React.Component<propsType> {
 								dataSource={ this.state.materailsList }
 								columns={ columns }
 								pagination={{
+									defaultCurrent: this.props.currentPage,
 									total: this.state.totalRow,
 									onChange: this.handlePageNumberChange
 								}}
@@ -231,10 +235,11 @@ class MaterailsList extends React.Component<propsType> {
 }
 
 const mapStateToProps = (state: any , ownProps: any) => {
+	console.log('state.searchHistory', state.searchHistory)
 	return {
 		userInfo: state.user.userInfo,
-		oneLevelId: state.searchHistory.level_one_id,
-		twoLevelId: state.searchHistory.level_two_id,
+		levelOneId: state.searchHistory.level_one_id,
+		levelTwoId: state.searchHistory.level_two_id,
 		currentPage: state.searchHistory.page_number,
 		currentKeyword: state.searchHistory.keyword
 	}

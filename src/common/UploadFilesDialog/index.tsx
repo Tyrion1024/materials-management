@@ -10,8 +10,8 @@ interface IProps {
 
 interface IState {
 	fileList: Array<{}>
-	oneLevelId: number | undefined
-	twoLevelId: number | undefined
+	levelOneId: number | undefined
+	levelTwoId: number | undefined
 }
 
 class UploadFileDialog extends React.Component<IProps> {
@@ -22,8 +22,8 @@ class UploadFileDialog extends React.Component<IProps> {
 		super(props)
 		this.state = {
 			fileList: [],
-			oneLevelId: undefined,
-			twoLevelId: undefined
+			levelOneId: undefined,
+			levelTwoId: undefined
 		}
 	}
 
@@ -32,7 +32,7 @@ class UploadFileDialog extends React.Component<IProps> {
 			message.error('请上传文件')
 			return
 		}
- 		if (!this.state.oneLevelId || !this.state.twoLevelId) {
+ 		if (!this.state.levelOneId || !this.state.levelTwoId) {
 			message.error('请选择一级分类和二级分类')
 			return
 		}
@@ -45,14 +45,14 @@ class UploadFileDialog extends React.Component<IProps> {
 
 	handleSelectOne = (e: any) => {
 		this.setState({
-			oneLevelId: e ? e : undefined,
-			twoLevelId: undefined
+			levelOneId: e ? e : undefined,
+			levelTwoId: undefined
 		})
 	}
 
 	handleSelectTwo = (e: any) => {
 		this.setState({
-			twoLevelId: e ? e : undefined
+			levelTwoId: e ? e : undefined
 		})
 	}
 
@@ -86,7 +86,7 @@ class UploadFileDialog extends React.Component<IProps> {
 				onOk={ this.handleOk }
 				onCancel={ this.handleCancel }
 			>
-				<SelectTree isUpload={ true } oneLevelId={ this.state.oneLevelId } twoLevelId={ this.state.twoLevelId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
+				<SelectTree isUpload={ true } levelOneId={ this.state.levelOneId } levelTwoId={ this.state.levelTwoId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
 				<div className="upload_container">
 					<Upload
 						customRequest={ this.upload }

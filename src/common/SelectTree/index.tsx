@@ -7,8 +7,8 @@ type TreeList = Array<{
 	[key: string]: any
 }>
 interface IProps {
-	oneLevelId: number | undefined
-	twoLevelId: number | undefined
+	levelOneId: number | undefined
+	levelTwoId: number | undefined
 	handleSelectOne: Function
 	handleSelectTwo: Function
 	isUpload: boolean
@@ -16,7 +16,6 @@ interface IProps {
 
 interface IState {
 	treeList: TreeList
-	treeListchildren: TreeList
 }
 
 class SelectTree extends React.Component<IProps> {
@@ -24,8 +23,7 @@ class SelectTree extends React.Component<IProps> {
 	constructor (props: IProps) {
 		super(props)
 		this.state = {
-			treeList: [],
-			treeListchildren: []
+			treeList: []
 		}
 	}
 
@@ -40,11 +38,16 @@ class SelectTree extends React.Component<IProps> {
 	}
 
 	handleSelectOne = (e: any) => {
-		const res = this.state.treeList.find((v: any) => v.id === e)
-		this.setState({
-			treeListchildren: res && res.children ? res.children : []
-		})
 		this.props.handleSelectOne(e)
+	}
+
+	treeListchildren = (): TreeList => {
+		if (this.props.levelOneId) {
+			const res = this.state.treeList.find((v: any) => v.id === this.props.levelOneId)
+			return res && res.children ? res.children : []
+		} else {
+			return []
+		}
 	}
 
 	handleSelectTwo = (e: any) => {
@@ -55,19 +58,19 @@ class SelectTree extends React.Component<IProps> {
 	render () {
 		return (
 			<React.Fragment>
-				<AntdSelect value={ this.props.oneLevelId } size="large" onChange={ this.handleSelectOne } placeholder="请选择一级分类">
+				<AntdSelect value={ this.props.levelOneId } size="large" onChange={ this.handleSelectOne } placeholder="请选择一级分类">
 					{
 						this.state.treeList.map((v: any, index: number) => {
 							return <AntdSelect.Option value={ v.id  } key={ index }> { v.level_name } </AntdSelect.Option>
 						})
 					}
 				</AntdSelect>
-				<AntdSelect value={ this.props.oneLevelId ? this.props.twoLevelId : '请先选择一级分类' } style={{margin: '0 15px'}} size="large" placeholder="请选择二级分类" onChange={ this.handleSelectTwo } disabled={ !this.state.treeListchildren.length }>
+				<AntdSelect value={ this.props.levelOneId ? this.props.levelTwoId : '请先选择一级分类' } style={{margin: '0 15px'}} size="large" placeholder="请选择二级分类" onChange={ this.handleSelectTwo } disabled={ !this.treeListchildren().length }>
 					{
 						!this.props.isUpload && <AntdSelect.Option value={ 0 } key={ -1 }> 全部二级分类 </AntdSelect.Option>
 					}
 					{
-						this.state.treeListchildren.map((v: any, index: number) => {
+						this.treeListchildren().map((v: any, index: number) => {
 							return <AntdSelect.Option value={ v.id  } key={ index }> { v.level_name } </AntdSelect.Option>
 						})
 					}

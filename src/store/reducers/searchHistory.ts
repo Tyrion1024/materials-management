@@ -6,21 +6,21 @@ const searchHistory = (state = {
 }, action: any) => {
   switch (action.type) {
     case 'SET_SEARCH_PAGE_NUMBER':
-      return Object.assign({
+      return Object.assign({}, state, {
         page_number: action.content
-      } ,state)
+      })
     case 'SET_SEARCH_KEYWORD':
-      return Object.assign({
+      return Object.assign({}, state, {
         keyword: action.content
-      } ,state)
-    case 'setSearchLevelOne':
-      return Object.assign({
+      })
+    case 'SET_SEARCH_LEVEL_ONE':
+      return Object.assign({}, state, {
         level_one_id: action.content
-      } ,state)
-      case 'setSearchLevelTwo':
-        return Object.assign({
-          level_two_id: action.content
-        } ,state)
+      })
+    case 'SET_SEARCH_LEVEL_TWO':
+      return Object.assign({}, state, {
+        level_two_id: action.content
+      })
     default:
       return state
   }
