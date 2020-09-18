@@ -1,7 +1,7 @@
 import React from 'react'
 import SelectTree from '../SelectTree'
 import axios from 'axios'
-import { Modal, Upload, Button, message } from 'antd'
+import { Modal, Upload, Button, message, Spin as AntdSpin } from 'antd'
 import './index.styl'
 interface IProps {
 	handleOk: Function
@@ -12,6 +12,7 @@ interface IState {
 	fileList: Array<{}>
 	levelOneId: number | undefined
 	levelTwoId: number | undefined
+	loading: Boolean
 }
 
 class UploadFileDialog extends React.Component<IProps> {
@@ -23,7 +24,8 @@ class UploadFileDialog extends React.Component<IProps> {
 		this.state = {
 			fileList: [],
 			levelOneId: undefined,
-			levelTwoId: undefined
+			levelTwoId: undefined,
+			loading: false
 		}
 	}
 
@@ -56,20 +58,25 @@ class UploadFileDialog extends React.Component<IProps> {
 		})
 	}
 
-
 	upload = (info: any) => {
+		this.setState({
+			loading: true
+		})
 		axios.post('/admin/uploadFiles', info.file).then((res: any) => {
 			let fileList = this.state.fileList
 			fileList.push(res)
 			this.setState({
-				fileList: fileList
+				fileList: fileList,
+				loading: false
 			})
 			message.success(`${info.file.name} file uploaded successfully`)
 		}).catch(err => {
 			message.error(`${info.file.name} file upload failed.`)
+			this.setState({
+				loading: false
+			})
 		})
 	}
-
 
 	delFile = (num: number) => {
 		this.setState({
@@ -85,7 +92,14 @@ class UploadFileDialog extends React.Component<IProps> {
 				visible={ true }
 				onOk={ this.handleOk }
 				onCancel={ this.handleCancel }
+				className="upload_Modal"
 			>
+				{
+					this.state.loading &&
+					<div className="upload_loading">
+						<AntdSpin />
+					</div>
+				}
 				<SelectTree isUpload={ true } levelOneId={ this.state.levelOneId } levelTwoId={ this.state.levelTwoId } handleSelectOne={ this.handleSelectOne } handleSelectTwo={ this.handleSelectTwo } />
 				<div className="upload_container">
 					<Upload
