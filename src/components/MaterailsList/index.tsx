@@ -73,7 +73,6 @@ class MaterailsList extends React.Component<propsType> {
 			level_one_id: this.props.levelOneId,
 			level_two_id: this.props.levelTwoId
 		}
-		console.log('params', params)
 		axios.get('/admin/getMaterailTable', {
 			params
 		}).then((res: any) => {
@@ -235,7 +234,6 @@ class MaterailsList extends React.Component<propsType> {
 }
 
 const mapStateToProps = (state: any , ownProps: any) => {
-	console.log('state.searchHistory', state.searchHistory)
 	return {
 		userInfo: state.user.userInfo,
 		levelOneId: state.searchHistory.level_one_id,
